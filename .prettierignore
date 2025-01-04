@@ -1,0 +1,6 @@
+# Ignore files
+dist
+build
+coverage
+node_modules
+*.d.ts

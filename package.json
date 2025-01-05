@@ -12,6 +12,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.62.15",
     "@tanstack/react-router": "^1.95.0",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.469.0",

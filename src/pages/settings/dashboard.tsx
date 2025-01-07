@@ -106,9 +106,9 @@ const DashboardPage = () => {
             <Wrench className="w-4 h-4" />
             Tooling Configuration
           </TabsTrigger>
-          <TabsTrigger value="playground" className="flex items-center gap-2">
+          <TabsTrigger value="Workbench" className="flex items-center gap-2">
             <PlayCircle className="w-4 h-4" />
-            Playground
+            Workbench
           </TabsTrigger>
         </TabsList>
 
@@ -356,14 +356,14 @@ const DashboardPage = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="playground">
+        <TabsContent value="Workbench">
           <Card>
             <CardHeader>
-              <CardTitle>Playground</CardTitle>
+              <CardTitle>Workbench</CardTitle>
               <CardDescription>Test and experiment with your APIs</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Playground content goes here</p>
+              <p>Workbench content goes here</p>
             </CardContent>
           </Card>
         </TabsContent>

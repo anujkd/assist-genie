@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Menu, MessageSquarePlus, Sun, Moon, Computer, LogOut, User as UserIcon, Settings } from 'lucide-react';
+import { Menu, MessageSquarePlus, Sun, Moon, Computer, LogOut, User as UserIcon, Settings, SquareChevronRight } from 'lucide-react';
 import { useTheme } from '../common/ThemeProvider';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
@@ -26,7 +26,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <Button variant="ghost" size="icon">
             <MessageSquarePlus className="h-5 w-5" />
           </Button>
-          <span className="font-semibold">AI Assistant</span>
+          <span className="font-semibold">Assistant Genie</span>
         </div>
         
         <div className="ml-auto">
@@ -34,8 +34,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar>
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                  <AvatarImage />
+                  <AvatarFallback>user</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -45,15 +45,15 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 <span>My Account</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <SquareChevronRight className="mr-2 h-4 w-4" />
+                <span>API Console</span>
               </DropdownMenuItem>
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-full">
-                  {theme === 'light' && <Sun className="mr-2 h-4 w-4" />}
-                  {theme === 'dark' && <Moon className="mr-2 h-4 w-4" />}
-                  {theme === 'system' && <Computer className="mr-2 h-4 w-4" />}
-                  <span>Theme</span>
+                <DropdownMenuTrigger className="ml-2 w-full flex items-center">
+                  {theme === 'light' && <Sun className="h-4 w-4" />}
+                  {theme === 'dark' && <Moon className="h-4 w-4" />}
+                  {theme === 'system' && <Computer className="h-4 w-4" />}
+                  <span className="ml-4">Theme</span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => setTheme('light')}>
@@ -67,7 +67,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <DropdownMenuItem onClick={logout}>
+              <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Logout</span>
               </DropdownMenuItem>
@@ -83,7 +83,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Footer */}
       <footer className="border-t py-4 px-6 text-center text-sm text-gray-500">
-        <p>© 2024 AI Assistant v1.0.0</p>
+        <p>© 2024 AI Assistant Genie v1.0.0</p>
       </footer>
     </div>
   );

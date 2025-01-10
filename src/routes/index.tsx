@@ -2,6 +2,7 @@ import { LoginPage } from '@/pages/auth/LoginPage';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import DashboardPage from '@/pages/settings/dashboard';
 import { MainLayout } from '@/components/layouts/MainLayout';
+import SignUpForm from '@/pages/auth/SignUp';
 // import { AuthGuard } from './guards/AuthGuard';
 // import { RoleGuard } from './guards/RoleGuard';
 // import { LoginPage } from '@/pages/auth/LoginPage';
@@ -26,6 +27,9 @@ const Router = () => {
     {
       path: '/login',
       element: <LoginPage />,
+    },{
+        path: '/SignUp',
+        element: <SignUpForm />
     },
     {
       path: '/chat',

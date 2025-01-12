@@ -27,7 +27,7 @@ const Router = () => {
     },
     {
       path: '/login',
-      element: <LoginPage />,
+      element: <MainLayout><LoginPage /></MainLayout>,
     },{
         path: '/SignUp',
         element: <SignUpForm />

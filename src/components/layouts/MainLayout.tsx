@@ -9,11 +9,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Menu, MessageSquarePlus, Sun, Moon, Computer, LogOut, User as UserIcon, Settings, SquareChevronRight } from 'lucide-react';
 import { useTheme } from '../common/ThemeProvider';
+import { useLogout, useUserProfile } from '@/hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const { data: profile, isLoading } = useUserProfile();
+  const logout = useLogout();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  console.log('profile', profile);
+  console.log('isLoading', isLoading);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -26,7 +32,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <Button variant="ghost" size="icon">
             <MessageSquarePlus className="h-5 w-5" />
           </Button>
-          <span className="font-semibold">Assistant Genie</span>
+          <Link to="/chat">  <span className="font-semibold">Assistant Genie</span></Link>
+         
         </div>
         
         <div className="ml-auto">
@@ -35,7 +42,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar>
                   <AvatarImage />
-                  <AvatarFallback>user</AvatarFallback>
+                  <AvatarFallback>{profile?.name && <span className="sr-only">{profile.name}</span>}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -46,7 +53,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <SquareChevronRight className="mr-2 h-4 w-4" />
-                <span>API Console</span>
+                <Link to="/settings"><span>API Console</span></Link> 
               </DropdownMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger className="ml-2 w-full flex items-center">
@@ -67,7 +74,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Logout</span>
               </DropdownMenuItem>

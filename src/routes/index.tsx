@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import DashboardPage from '@/pages/settings/dashboard';
 import { MainLayout } from '@/components/layouts/MainLayout';
 import SignUpForm from '@/pages/auth/SignUp';
+import { AuthGuard } from './guards/AuthGuard';
 // import { AuthGuard } from './guards/AuthGuard';
 // import { RoleGuard } from './guards/RoleGuard';
 // import { LoginPage } from '@/pages/auth/LoginPage';
@@ -33,6 +34,11 @@ const Router = () => {
     },
     {
       path: '/chat',
+      element: <AuthGuard>
+      <MainLayout>
+  <div> chat</div>
+</MainLayout>
+    </AuthGuard>
     //   element: (
     //     <AuthGuard>
     //       <MainLayout>
@@ -55,9 +61,11 @@ const Router = () => {
     },
     {
         path: '/settings',
-        element: <MainLayout>
-        <DashboardPage />
-      </MainLayout>,
+        element: <AuthGuard>
+        <MainLayout>
+    <DashboardPage />
+  </MainLayout>
+      </AuthGuard>,
     }
   ]);
 

@@ -68,7 +68,9 @@ import { persist } from 'zustand/middleware';
 
 interface AuthState {
   token: string | null;
+  accountId: string | null;
   setToken: (token: string) => void;
+  setAccountId: (accountId: string) => void;
   logout: () => void;
 }
 
@@ -76,13 +78,18 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       token: null,
+      accountId: null,
       setToken: (token: string) => set({ token }),
-      logout: () => set({ token: null }),
+      setAccountId: (accountId: string) => set({ accountId }),
+      logout: () => set({ token: null, accountId: null }),
     }),
     {
-      name: 'auth-token',
-      // Only persist the token
-      partialize: (state) => ({ token: state.token }),
+      name: 'auth-storage',
+      // Only persist token and accountId
+      partialize: (state) => ({ 
+        token: state.token,
+        accountId: state.accountId 
+      }),
     }
   )
 );

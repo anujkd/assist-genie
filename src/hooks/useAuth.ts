@@ -129,35 +129,105 @@
 //   };
   
 
+// import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+// import { useNavigate } from 'react-router-dom';
+// import { useAuthStore } from '../stores/auth.store';
+// import { LoginCredentials, LoginResponse, UserProfile } from '@/types/auth.types';
+// import { httpClient } from '@/services';
+
+// export const useLogin = () => {
+//   const queryClient = useQueryClient();
+//   const navigate = useNavigate();
+//   const setToken = useAuthStore((state) => state.setToken);
+
+//   return useMutation({
+//     mutationFn: async (credentials: LoginCredentials) => {
+//       const { data } = await httpClient.post<LoginResponse>('/login', credentials);
+//       return data;
+//     },
+//     onSuccess: async (data) => {
+//       // Store only the token
+//       setToken(data.token);
+      
+//       // Fetch and cache user profile
+//       const { data: profile } = await httpClient.get<UserProfile>(
+//         `/account/${data.accountId}/userprofile`
+//       );
+      
+//       // Cache the profile data
+//       queryClient.setQueryData(['userProfile'], profile);
+      
+//       // Navigate based on role
+//       navigate(profile.role === 'admin' ? '/admin' : '/chat');
+//     },
+//   });
+// };
+
+// export const useUserProfile = () => {
+//   const token = useAuthStore((state) => state.token);
+
+//   return useQuery({
+//     queryKey: ['userProfile'],
+//     queryFn: async () => {
+//       const response = await httpClient.get<UserProfile>('/account/abc/userprofile');
+//       return response.data;
+//     },
+//     enabled: !!token,
+//     staleTime: 300000, // Consider data fresh for 5 minutes
+//   });
+// };
+
+// export const useLogout = () => {
+//   const queryClient = useQueryClient();
+//   const navigate = useNavigate();
+//   const logout = useAuthStore((state) => state.logout);
+
+//   return () => {
+//     logout();
+//     queryClient.clear();
+//     navigate('/login');
+//   };
+// };
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import { LoginCredentials, LoginResponse, UserProfile } from '@/types/auth.types';
 import { httpClient } from '@/services';
+import { useState } from 'react';
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const setToken = useAuthStore((state) => state.setToken);
+  const { setToken, setAccountId } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
-      const { data } = await httpClient.post<LoginResponse>('/login', credentials);
-      return data;
+      setIsLoading(true);
+      try {
+        const { data } = await httpClient.post<LoginResponse>('/login', credentials);
+        return data;
+      } finally {
+        setIsLoading(false);
+      }
     },
     onSuccess: async (data) => {
-      // Store only the token
+      // Store token and accountId
       setToken(data.token);
+      setAccountId(data.accountId);
       
-      // Fetch and cache user profile
-      const { data: profile } = await httpClient.get<UserProfile>(
-        `/account/${data.accountId}/userprofile`
-      );
-      
-      // Cache the profile data
-      queryClient.setQueryData(['userProfile'], profile);
+      // Only fetch profile if not already in cache
+      const existingProfile = queryClient.getQueryData(['userProfile', data.accountId]);
+      if (!existingProfile) {
+        const { data: profile } = await httpClient.get<UserProfile>(
+          `/account/${data.accountId}/userprofile`
+        );
+        queryClient.setQueryData(['userProfile', data.accountId], profile);
+      }
       
       // Navigate based on role
+      const profile = existingProfile || queryClient.getQueryData(['userProfile', data.accountId]);
       navigate(profile.role === 'admin' ? '/admin' : '/chat');
     },
   });
@@ -165,15 +235,24 @@ export const useLogin = () => {
 
 export const useUserProfile = () => {
   const token = useAuthStore((state) => state.token);
+  const accountId = useAuthStore((state) => state.accountId);
+  const queryClient = useQueryClient();
 
   return useQuery({
-    queryKey: ['userProfile'],
+    queryKey: ['userProfile', accountId],
     queryFn: async () => {
-      const response = await httpClient.get<UserProfile>('/account/abc/userprofile');
+      // Check cache first
+      const cachedProfile = queryClient.getQueryData(['userProfile', accountId]);
+      if (cachedProfile) {
+        return cachedProfile;
+      }
+
+      const response = await httpClient.get<UserProfile>(`/account/${accountId}/userprofile`);
       return response.data;
     },
-    enabled: !!token,
-    staleTime: 300000, // Consider data fresh for 5 minutes
+    enabled: !!token && !!accountId,
+    staleTime: Infinity, // Profile data won't go stale
+    // cacheTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
   });
 };
 

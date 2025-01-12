@@ -11,6 +11,7 @@ import { Menu, MessageSquarePlus, Sun, Moon, Computer, LogOut, User as UserIcon,
 import { useTheme } from '../common/ThemeProvider';
 import { useLogout, useUserProfile } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
+import Header from '../common/Header';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { data: profile, isLoading } = useUserProfile();
@@ -24,7 +25,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="border-b h-14 flex items-center px-4">
+      {/* <header className="border-b h-14 flex items-center px-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <Menu className="h-5 w-5" />
@@ -81,7 +82,14 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </header>
+      </header> */}
+      <Header
+        userName={profile?.name || 'User'}
+        theme={theme}
+        onThemeChange={setTheme}
+        onLogout={logout}
+        onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+      />
 
       {/* Main Content */}
       <main className="flex-1">

@@ -12,6 +12,7 @@ import { useTheme } from '../common/ThemeProvider';
 import { useLogout, useUserProfile } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
 import Header from '../common/Header';
+import Footer from '../common/Footer';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { data: profile, isLoading } = useUserProfile();
@@ -97,9 +98,10 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-4 px-6 text-center text-sm text-gray-500">
+      {/* <footer className="border-t py-4 px-6 text-center text-sm text-gray-500">
         <p>© 2024 AI Assistant Genie v1.0.0</p>
-      </footer>
+      </footer> */}
+      <Footer theme={theme}/>
     </div>
   );
 };

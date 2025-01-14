@@ -4,6 +4,7 @@ import DashboardPage from '@/pages/settings/dashboard';
 import { MainLayout } from '@/components/layouts/MainLayout';
 import SignUpForm from '@/pages/auth/SignUp';
 import { AuthGuard } from './guards/AuthGuard';
+import Chat from '@/components/chat/Chat4';
 // import { AuthGuard } from './guards/AuthGuard';
 // import { RoleGuard } from './guards/RoleGuard';
 // import { LoginPage } from '@/pages/auth/LoginPage';
@@ -34,11 +35,11 @@ const Router = () => {
     },
     {
       path: '/chat',
-      element: <AuthGuard>
+      element: <>
       <MainLayout>
-  <div> chat</div>
+  <Chat />
 </MainLayout>
-    </AuthGuard>
+    </>
     //   element: (
     //     <AuthGuard>
     //       <MainLayout>

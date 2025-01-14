@@ -14,6 +14,9 @@ export default defineConfig(({ command, mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    optimizeDeps: {
+      include: ['react-markdown', 'remark-gfm', 'react-syntax-highlighter'],
+    },
     server: {
       port: 3000,
       open: true,

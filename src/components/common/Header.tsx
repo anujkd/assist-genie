@@ -25,13 +25,15 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
+import { X } from 'lucide-react';
 
 const Header = ({ 
   userName = 'John Doe',
   theme = 'system',
   onThemeChange,
   onLogout,
-  onSidebarToggle 
+  onSidebarToggle ,
+  isSidebarOpen
 }) => {
   // Define theme-based styles
   const headerStyles = cn(
@@ -93,7 +95,7 @@ const Header = ({
           onClick={onSidebarToggle}
           className={buttonStyles}
         >
-          <Menu className="h-5 w-5" />
+          {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
 
         {/* Lloyds Bank Logo */}

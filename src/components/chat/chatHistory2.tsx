@@ -9,32 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-
-interface ChatMessage {
-  id: string;
-  content: string;
-  timestamp: string;
-  role: 'user' | 'assistant';
-}
 
 interface Chat {
   id: string;
   title: string;
   lastMessage: string;
   timestamp: string;
-  messages: ChatMessage[];
 }
 
 interface ChatSidebarProps {
@@ -56,26 +37,34 @@ const ChatSidebar = ({
   selectedChatId,
   className
 }: ChatSidebarProps) => {
-  // State
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [chats, setChats] = useState<Chat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deletingChatId, setDeletingChatId] = useState<string | null>(null);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
 
-  // Fetch chat history
   useEffect(() => {
     const fetchChats = async () => {
       try {
         setIsLoading(true);
-        // Replace with your actual API endpoint
-        const response = await fetch('/api/chats');
-        if (!response.ok) throw new Error('Failed to fetch chats');
-        const data = await response.json();
-        setChats(data);
+        // Mock data - replace with actual API call
+        const mockData: Chat[] = [
+          {
+            id: '1',
+            title: 'First Chat',
+            lastMessage: 'Hello there!',
+            timestamp: new Date().toISOString()
+          },
+          {
+            id: '2',
+            title: 'Second Chat',
+            lastMessage: 'How are you?',
+            timestamp: new Date().toISOString()
+          }
+        ];
+        setChats(mockData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load chats');
       } finally {
@@ -86,52 +75,31 @@ const ChatSidebar = ({
     fetchChats();
   }, []);
 
-  // Filter chats based on search query
   const filteredChats = chats.filter(chat =>
     chat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
 
-    if (days === 0) {
-      return date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      });
-    } else if (days === 1) {
-      return 'Yesterday';
-    } else if (days < 7) {
-      return date.toLocaleDateString('en-US', { weekday: 'long' });
-    } else {
-      return date.toLocaleDateString('en-US', { 
-        month: 'short',
-        day: 'numeric'
-      });
+  const handleDeleteChat = async (chatId: string) => {
+    if (window.confirm('Are you sure you want to delete this chat?')) {
+      try {
+        await onDeleteChat(chatId);
+        setChats(chats.filter(chat => chat.id !== chatId));
+      } catch (err) {
+        setError('Failed to delete chat');
+      }
     }
   };
 
-  // Handle chat deletion
-  const handleDeleteConfirm = async () => {
-    if (!deletingChatId) return;
-    try {
-      // Replace with your actual delete API call
-      await onDeleteChat(deletingChatId);
-      setChats(chats.filter(chat => chat.id !== deletingChatId));
-    } catch (err) {
-      setError('Failed to delete chat');
-    } finally {
-      setDeletingChatId(null);
-    }
-  };
-
-  // Handle chat title editing
   const handleEditSubmit = async (chatId: string, newTitle: string) => {
     try {
       await onEditChat(chatId, newTitle);
@@ -203,7 +171,7 @@ const ChatSidebar = ({
       </div>
 
       {/* Chat List */}
-      <ScrollArea className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -304,7 +272,7 @@ const ChatSidebar = ({
                       className="text-destructive focus:text-destructive"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setDeletingChatId(chat.id);
+                        handleDeleteChat(chat.id);
                       }}
                     >
                       Delete
@@ -315,29 +283,7 @@ const ChatSidebar = ({
             ))}
           </div>
         )}
-      </ScrollArea>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingChatId} onOpenChange={() => setDeletingChatId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Chat</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete this chat and all its messages.
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      </div>
     </div>
   );
 };
